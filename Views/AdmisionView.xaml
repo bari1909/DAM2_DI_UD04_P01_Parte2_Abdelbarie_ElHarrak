@@ -1,0 +1,291 @@
+<UserControl x:Class="Veterinario_MVVM.Views.AdmisionView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Veterinario_MVVM.ViewModels"
+             mc:Ignorable="d" d:DesignHeight="700" d:DesignWidth="950"
+             d:DataContext="{d:DesignInstance Type=vm:AdmisionViewModel, IsDesignTimeCreatable=True}">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
+        <Grid Margin="0,0,10,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0" Margin="0,0,0,12">
+                <TextBlock Text="Ficha de admisión hospitalaria" FontSize="20" FontWeight="SemiBold"
+                           Foreground="{StaticResource BrushTexto}"/>
+                <TextBlock Text="Los campos con * son obligatorios. Los errores se avisan al momento con la insignia ! y un mensaje debajo del campo."
+                           FontSize="12" Foreground="{StaticResource BrushTexto2}" Margin="0,4,0,0" TextWrapping="Wrap"/>
+            </StackPanel>
+
+            <!-- Datos del paciente -->
+            <Border Grid.Row="1" Style="{StaticResource EstiloTarjeta}" Margin="0,0,0,12">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.ColumnSpan="5" Text="Datos del paciente" Style="{StaticResource EstiloTituloTarjeta}"/>
+
+                    <!-- Microchip Oficial (15 dígitos) y Validación Asíncrona Telemática en REIAC -->
+                    <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,10">
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="_Microchip (15 dígitos ISO) *" Target="{Binding ElementName=txtMicrochip}" Style="{StaticResource EstiloEtiqueta}"/>
+                            <TextBlock Text="Verificando en REIAC..." Foreground="#8A4B08" FontWeight="SemiBold" FontSize="11" Margin="10,0,0,0"
+                                       Visibility="{Binding IsVerificandoMicrochip, Converter={StaticResource BoolToVisibility}}"
+                                       AutomationProperties.LiveSetting="Polite"/>
+                        </StackPanel>
+                        <TextBox x:Name="txtMicrochip" TabIndex="1" MaxLength="15"
+                                 Text="{Binding Microchip, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}"
+                                 AutomationProperties.Name="Microchip"
+                                 AutomationProperties.HelpText="Obligatorio. 15 dígitos según ISO 11784/11785. Se comprueba en el registro REIAC"/>
+                        <TextBlock Text="{Binding (Validation.Errors)/ErrorContent, ElementName=txtMicrochip}" Style="{StaticResource EstiloTextoError}"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="1" Grid.Column="4" Margin="0,0,0,10">
+                        <Label Content="_Nombre de la mascota *" Target="{Binding ElementName=txtNombreMascota}" Style="{StaticResource EstiloEtiqueta}"/>
+                        <TextBox x:Name="txtNombreMascota" TabIndex="2" MaxLength="40"
+                                 Text="{Binding NombreMascota, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}"
+                                 AutomationProperties.Name="Nombre de la mascota"
+                                 AutomationProperties.HelpText="Obligatorio. Entre 2 y 40 caracteres"/>
+                        <TextBlock Text="{Binding (Validation.Errors)/ErrorContent, ElementName=txtNombreMascota}" Style="{StaticResource EstiloTextoError}"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,0,0,10">
+                        <Label Content="_Especie *" Target="{Binding ElementName=cmbEspecie}" Style="{StaticResource EstiloEtiqueta}"/>
+                        <ComboBox x:Name="cmbEspecie" TabIndex="3"
+                                  ItemsSource="{Binding Especies}"
+                                  SelectedItem="{Binding Especie, NotifyOnValidationError=True}"
+                                  AutomationProperties.Name="Especie"
+                                  AutomationProperties.HelpText="Especie del paciente. Limita el peso máximo de aves, roedores y reptiles"/>
+                        <TextBlock Text="{Binding (Validation.Errors)/ErrorContent, ElementName=cmbEspecie}" Style="{StaticResource EstiloTextoError}"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="2" Grid.Column="2" Margin="0,0,0,10">
+                        <Label Content="_Raza" Target="{Binding ElementName=txtRaza}" Style="{StaticResource EstiloEtiqueta}"/>
+                        <TextBox x:Name="txtRaza" TabIndex="4" MaxLength="50"
+                                 Text="{Binding Raza, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}"
+                                 AutomationProperties.Name="Raza"
+                                 AutomationProperties.HelpText="Opcional. Máximo 50 caracteres"/>
+                        <TextBlock Text="{Binding (Validation.Errors)/ErrorContent, ElementName=txtRaza}" Style="{StaticResource EstiloTextoError}"/>
+                    </StackPanel>
+
+                    <!-- Límites de Fechas -->
+                    <StackPanel Grid.Row="2" Grid.Column="4" Margin="0,0,0,10">
+                        <Label Content="_Fecha de nacimiento *" Target="{Binding ElementName=dpFechaNacimiento}" Style="{StaticResource EstiloEtiqueta}"/>
+                        <DatePicker x:Name="dpFechaNacimiento" TabIndex="5"
+                                    SelectedDate="{Binding FechaNacimiento, NotifyOnValidationError=True}"
+                                    AutomationProperties.Name="Fecha de nacimiento"
+                                    AutomationProperties.HelpText="No puede ser futura ni de hace más de 30 años"/>
+                        <TextBlock Text="{Binding (Validation.Errors)/ErrorContent, ElementName=dpFechaNacimiento}" Style="{StaticResource EstiloTextoError}"/>
+                    </StackPanel>
+
+                    <!-- Rangos Biométricos Fisiológicos y Reglas Cruzadas (Especie vs. Peso) -->
+                    <StackPanel Grid.Row="3" Grid.Column="0">
+                        <Label Content="_Peso (kg) *" Target="{Binding ElementName=txtPeso}" Style="{StaticResource EstiloEtiqueta}"/>
+                        <TextBox x:Name="txtPeso" TabIndex="6"
+                                 Text="{Binding Peso, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}"
+                                 AutomationProperties.Name="Peso en kilos"
+                                 AutomationProperties.HelpText="Entre 0,05 y 120 kg. Ave máximo 5 kg, roedor 3 kg y reptil 25 kg"/>
+                        <TextBlock Text="{Binding (Validation.Errors)/ErrorContent, ElementName=txtPeso}" Style="{StaticResource EstiloTextoError}"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="3" Grid.Column="2">
+                        <Label Content="_Temperatura (°C) *" Target="{Binding ElementName=txtTemperatura}" Style="{StaticResource EstiloEtiqueta}"/>
+                        <TextBox x:Name="txtTemperatura" TabIndex="7"
+                                 Text="{Binding Temperatura, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}"
+                                 AutomationProperties.Name="Temperatura corporal en grados"
+                                 AutomationProperties.HelpText="Temperatura corporal entre 35,0 y 42,5 grados"/>
+                        <TextBlock Text="{Binding (Validation.Errors)/ErrorContent, ElementName=txtTemperatura}" Style="{StaticResource EstiloTextoError}"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Datos del titular -->
+            <Border Grid.Row="2" Style="{StaticResource EstiloTarjeta}" Margin="0,0,0,12">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.ColumnSpan="5" Text="Datos del titular" Style="{StaticResource EstiloTituloTarjeta}"/>
+
+                    <!-- Formato Regex e Identidad: DNI / NIE del Titular -->
+                    <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,0,10">
+                        <Label Content="_DNI / NIE *" Target="{Binding ElementName=txtDni}" Style="{StaticResource EstiloEtiqueta}"/>
+                        <TextBox x:Name="txtDni" TabIndex="8" MaxLength="9" CharacterCasing="Upper"
+                                 Text="{Binding TitularDni, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}"
+                                 AutomationProperties.Name="DNI o NIE del titular"
+                                 AutomationProperties.HelpText="Obligatorio. 8 números y letra, o X, Y, Z con 7 números y letra. Se comprueba la letra"/>
+                        <TextBlock Text="{Binding (Validation.Errors)/ErrorContent, ElementName=txtDni}" Style="{StaticResource EstiloTextoError}"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="3" Margin="0,0,0,10">
+                        <Label Content="Nom_bre del titular *" Target="{Binding ElementName=txtTitularNombre}" Style="{StaticResource EstiloEtiqueta}"/>
+                        <TextBox x:Name="txtTitularNombre" TabIndex="9" MaxLength="40"
+                                 Text="{Binding TitularNombre, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}"
+                                 AutomationProperties.Name="Nombre del titular"
+                                 AutomationProperties.HelpText="Obligatorio. Entre 2 y 40 caracteres"/>
+                        <TextBlock Text="{Binding (Validation.Errors)/ErrorContent, ElementName=txtTitularNombre}" Style="{StaticResource EstiloTextoError}"/>
+                    </StackPanel>
+
+                    <!-- Canales de Contacto: Teléfono y Correo -->
+                    <StackPanel Grid.Row="2" Grid.Column="0">
+                        <Label Content="Te_léfono móvil *" Target="{Binding ElementName=txtTelefono}" Style="{StaticResource EstiloEtiqueta}"/>
+                        <TextBox x:Name="txtTelefono" TabIndex="10" MaxLength="9"
+                                 Text="{Binding TitularTelefono, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}"
+                                 AutomationProperties.Name="Teléfono del titular"
+                                 AutomationProperties.HelpText="Obligatorio. 9 dígitos que empiezan por 6, 7, 8 o 9"/>
+                        <TextBlock Text="{Binding (Validation.Errors)/ErrorContent, ElementName=txtTelefono}" Style="{StaticResource EstiloTextoError}"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="3">
+                        <Label Content="Corre_o electrónico *" Target="{Binding ElementName=txtEmail}" Style="{StaticResource EstiloEtiqueta}"/>
+                        <TextBox x:Name="txtEmail" TabIndex="11" MaxLength="80"
+                                 Text="{Binding TitularEmail, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}"
+                                 AutomationProperties.Name="Correo electrónico del titular"
+                                 AutomationProperties.HelpText="Obligatorio. Por ejemplo nombre@correo.com"/>
+                        <TextBlock Text="{Binding (Validation.Errors)/ErrorContent, ElementName=txtEmail}" Style="{StaticResource EstiloTextoError}"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Protocolo Quirúrgico Condicional: Cirugía / Ayuno / Firma -->
+            <Border Grid.Row="3" Style="{StaticResource EstiloTarjeta}" Margin="0,0,0,12">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.ColumnSpan="5" Text="Protocolo quirúrgico" Style="{StaticResource EstiloTituloTarjeta}"/>
+
+                    <CheckBox x:Name="chkCirugia" Grid.Row="1" Grid.ColumnSpan="5" TabIndex="12" Margin="0,0,0,10"
+                              Content="El paciente requiere c_irugía"
+                              IsChecked="{Binding RequiereCirugia}"
+                              AutomationProperties.Name="Requiere cirugía"
+                              AutomationProperties.HelpText="Al marcarla son obligatorios el ayuno de 8 horas, el tipo de intervención y el consentimiento"/>
+
+                    <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,0,0,10" IsEnabled="{Binding RequiereCirugia}">
+                        <Label Content="Horas de a_yuno" Target="{Binding ElementName=txtAyuno}" Style="{StaticResource EstiloEtiqueta}"/>
+                        <TextBox x:Name="txtAyuno" TabIndex="13" MaxLength="2"
+                                 Text="{Binding HorasAyuno, UpdateSourceTrigger=PropertyChanged, TargetNullValue='', NotifyOnValidationError=True}"
+                                 AutomationProperties.Name="Horas de ayuno"
+                                 AutomationProperties.HelpText="Con cirugía, al menos 8 horas"/>
+                        <TextBlock Text="{Binding (Validation.Errors)/ErrorContent, ElementName=txtAyuno}" Style="{StaticResource EstiloTextoError}"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="2" Grid.Column="2" Margin="0,0,0,10" IsEnabled="{Binding RequiereCirugia}">
+                        <Label Content="Tipo de inter_vención" Target="{Binding ElementName=cmbIntervencion}" Style="{StaticResource EstiloEtiqueta}"/>
+                        <ComboBox x:Name="cmbIntervencion" TabIndex="14"
+                                  ItemsSource="{Binding TiposIntervencion}"
+                                  SelectedItem="{Binding TipoIntervencion, NotifyOnValidationError=True}"
+                                  AutomationProperties.Name="Tipo de intervención"
+                                  AutomationProperties.HelpText="Con cirugía es obligatorio elegir el tipo de intervención"/>
+                        <TextBlock Text="{Binding (Validation.Errors)/ErrorContent, ElementName=cmbIntervencion}" Style="{StaticResource EstiloTextoError}"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="2" Grid.Column="4" Margin="0,22,0,10" IsEnabled="{Binding RequiereCirugia}">
+                        <CheckBox x:Name="chkConsentimiento" TabIndex="15"
+                                  Content="Consentimiento firmado por el tit_ular"
+                                  IsChecked="{Binding ConsentimientoFirmado, NotifyOnValidationError=True}"
+                                  AutomationProperties.Name="Consentimiento firmado"
+                                  AutomationProperties.HelpText="Con cirugía, el titular debe haber firmado el consentimiento informado"/>
+                        <TextBlock Text="{Binding (Validation.Errors)/ErrorContent, ElementName=chkConsentimiento}" Style="{StaticResource EstiloTextoError}"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="3" Grid.ColumnSpan="5">
+                        <Label Content="Observ_aciones" Target="{Binding ElementName=txtObservaciones}" Style="{StaticResource EstiloEtiqueta}"/>
+                        <TextBox x:Name="txtObservaciones" TabIndex="16" MaxLength="500" Height="60"
+                                 AcceptsReturn="True" TextWrapping="Wrap" VerticalContentAlignment="Top" Padding="10,8"
+                                 Text="{Binding Observaciones, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True}"
+                                 AutomationProperties.Name="Observaciones"
+                                 AutomationProperties.HelpText="Opcional. Máximo 500 caracteres"/>
+                        <TextBlock Text="{Binding (Validation.Errors)/ErrorContent, ElementName=txtObservaciones}" Style="{StaticResource EstiloTextoError}"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <Border Grid.Row="4" Background="{StaticResource BrushBadgeVerdeFondo}" CornerRadius="8" Padding="14,10" Margin="0,0,0,12"
+                    Visibility="{Binding HayMensajeExito, Converter={StaticResource BoolToVisibility}}">
+                <TextBlock Text="{Binding MensajeExito}" Foreground="{StaticResource BrushBadgeVerdeTexto}" FontWeight="SemiBold"
+                           TextWrapping="Wrap" AutomationProperties.LiveSetting="Polite"/>
+            </Border>
+
+            <!-- Botones de demostración y acciones -->
+            <Grid Grid.Row="5" Margin="0,0,0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="Probar caso con errores" TabIndex="19" Margin="0,0,10,0"
+                            Style="{StaticResource EstiloBotonPeligro}"
+                            Command="{Binding CargarCasoInvalidoCommand}"
+                            AutomationProperties.Name="Probar caso con errores"
+                            AutomationProperties.HelpText="Rellena la ficha con datos incorrectos para ver cómo se avisan los errores"/>
+                    <Button Content="Probar caso válido" TabIndex="20"
+                            Style="{StaticResource EstiloBotonSecundario}"
+                            Command="{Binding CargarCasoValidoCommand}"
+                            AutomationProperties.Name="Probar caso válido"
+                            AutomationProperties.HelpText="Rellena la ficha con datos correctos"/>
+                </StackPanel>
+
+                <TextBlock Grid.Column="1" Text="Hay campos con errores: revisa los marcados con !" Margin="15,0"
+                           VerticalAlignment="Center" HorizontalAlignment="Right" TextWrapping="Wrap"
+                           Style="{StaticResource EstiloTextoError}" FontSize="12"
+                           Visibility="{Binding HasErrors, Converter={StaticResource BoolToVisibility}}"/>
+
+                <StackPanel Grid.Column="2" Orientation="Horizontal">
+                    <Button Content="Limpiar" TabIndex="18" IsCancel="True" Margin="0,0,10,0"
+                            Style="{StaticResource EstiloBotonSecundario}"
+                            Command="{Binding LimpiarCommand}"
+                            AutomationProperties.Name="Limpiar ficha"
+                            AutomationProperties.HelpText="Vacía la ficha de admisión. También con la tecla Escape"/>
+                    <Button Content="Re_gistrar admisión" TabIndex="17" IsDefault="True"
+                            Style="{StaticResource EstiloBotonPrimario}"
+                            Command="{Binding RegistrarAdmisionCommand}"
+                            AutomationProperties.Name="Registrar admisión"
+                            AutomationProperties.HelpText="Se activa cuando no hay errores, no se está verificando el microchip y los campos obligatorios están rellenos"/>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </ScrollViewer>
+</UserControl>

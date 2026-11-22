@@ -1,0 +1,103 @@
+<Window x:Class="Veterinario_MVVM.Views.LoginView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:Veterinario_MVVM.ViewModels"
+        xmlns:helpers="clr-namespace:Veterinario_MVVM.Helpers"
+        x:Name="VentanaLogin"
+        Title="VetCare Studio - Acceso"
+        Height="600" Width="480" MinHeight="560" MinWidth="440"
+        WindowStartupLocation="CenterScreen"
+        Language="es-ES"
+        FontFamily="Segoe UI" FontSize="14"
+        Background="{StaticResource BrushFondo}"
+        FocusManager.FocusedElement="{Binding ElementName=TxtUsuario}">
+
+    <Window.DataContext>
+        <vm:LoginViewModel/>
+    </Window.DataContext>
+
+    <Grid Margin="20">
+        <Border Style="{StaticResource EstiloTarjeta}" Width="380" Padding="30,25"
+                HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Cabecera con el logo de la clínica -->
+                <StackPanel Grid.Row="0" HorizontalAlignment="Center" Margin="0,0,0,20">
+                    <Border Width="56" Height="56" CornerRadius="14" Background="{StaticResource BrushPrimario}"
+                            HorizontalAlignment="Center">
+                        <TextBlock Text="🐾" FontFamily="Segoe UI Emoji" FontSize="26" Foreground="White"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <TextBlock Text="VetCare Studio" FontSize="24" FontWeight="SemiBold" Margin="0,12,0,0"
+                               Foreground="{StaticResource BrushPrimario}" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Acceso del personal veterinario" Margin="0,4,0,0"
+                               Foreground="{StaticResource BrushTexto2}" HorizontalAlignment="Center"/>
+                </StackPanel>
+
+                <!-- Usuario -->
+                <StackPanel Grid.Row="1" Margin="0,0,0,15">
+                    <Label Content="_Usuario:" Target="{Binding ElementName=TxtUsuario}" Style="{StaticResource EstiloEtiqueta}"/>
+                    <TextBox x:Name="TxtUsuario" TabIndex="1"
+                             Text="{Binding Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             AutomationProperties.Name="Nombre de usuario"
+                             AutomationProperties.HelpText="Escriba su nombre de usuario de la clínica"/>
+                </StackPanel>
+
+                <!-- Vinculación segura de PasswordBox con PasswordBoxHelper -->
+                <StackPanel Grid.Row="2" Margin="0,0,0,15">
+                    <Label Content="_Contraseña:" Target="{Binding ElementName=pwdPassword}" Style="{StaticResource EstiloEtiqueta}"/>
+                    <PasswordBox x:Name="pwdPassword"
+                                 helpers:PasswordBoxHelper.BindPassword="True"
+                                 helpers:PasswordBoxHelper.BoundPassword="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 Height="38"
+                                 TabIndex="2"
+                                 AutomationProperties.Name="Contraseña de acceso"
+                                 AutomationProperties.HelpText="Escriba su contraseña. El botón Iniciar sesión se activa al rellenar los dos campos"/>
+                </StackPanel>
+
+                <!-- Mensaje de error claro si las credenciales son incorrectas -->
+                <Border Grid.Row="3" Background="{StaticResource BrushErrorFondo}" BorderBrush="{StaticResource BrushError}"
+                        BorderThickness="1" CornerRadius="8" Padding="12,8" Margin="0,0,0,15"
+                        Visibility="{Binding HayError, Converter={StaticResource BoolToVisibility}}">
+                    <TextBlock Text="{Binding MensajeError}" Foreground="{StaticResource BrushError}"
+                               TextWrapping="Wrap" FontSize="13"
+                               AutomationProperties.LiveSetting="Assertive"/>
+                </Border>
+
+                <!-- Indicador de ocupación (IsBusy) -->
+                <StackPanel Grid.Row="4" Margin="0,0,0,15"
+                            Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibility}}">
+                    <TextBlock Text="Comprobando credenciales..." FontSize="12" Foreground="{StaticResource BrushTexto2}"
+                               Margin="0,0,0,6"/>
+                    <ProgressBar IsIndeterminate="True" Height="6" BorderThickness="0"
+                                 Foreground="{StaticResource BrushPrimario}" Background="{StaticResource BrushDisabled}"
+                                 AutomationProperties.Name="Comprobando credenciales"/>
+                </StackPanel>
+
+                <!-- Botón Iniciar Sesión: LoginCommand con CanExecute -->
+                <Button Grid.Row="5" Content="_Iniciar sesión" TabIndex="3" IsDefault="True"
+                        Style="{StaticResource EstiloBotonPrimario}"
+                        Command="{Binding LoginCommand}"
+                        CommandParameter="{Binding ElementName=VentanaLogin}"
+                        AutomationProperties.Name="Iniciar sesión"
+                        AutomationProperties.HelpText="Comprueba las credenciales y abre el panel de la clínica. Se activa al escribir usuario y contraseña"/>
+
+                <Button Grid.Row="6" Content="_Salir" TabIndex="4" IsCancel="True" Margin="0,10,0,0"
+                        Style="{StaticResource EstiloBotonSecundario}"
+                        Command="{Binding SalirCommand}"
+                        CommandParameter="{Binding ElementName=VentanaLogin}"
+                        AutomationProperties.Name="Salir de la aplicación"
+                        AutomationProperties.HelpText="Cierra la aplicación. También se activa con la tecla Escape"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

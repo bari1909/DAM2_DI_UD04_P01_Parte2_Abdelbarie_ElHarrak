@@ -1,0 +1,192 @@
+<UserControl x:Class="Veterinario_MVVM.Views.PacientesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignHeight="600" d:DesignWidth="1200">
+
+    <!-- Maquetación en Grid de 2 columnas principales -->
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="340"/>
+            <ColumnDefinition Width="20"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Columna izquierda (340 px fija): Tarjeta con el formulario de alta/edición -->
+        <Border Grid.Column="0" Style="{StaticResource EstiloTarjeta}" Padding="0">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
+                <Grid Margin="20,15">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.ColumnSpan="3" Text="{Binding TituloFormulario}" Style="{StaticResource EstiloTituloTarjeta}"/>
+
+                    <StackPanel Grid.Row="1" Grid.ColumnSpan="3" Margin="0,0,0,8">
+                        <Label Content="_Nombre de la mascota *" Target="{Binding ElementName=TxtNombre}" Style="{StaticResource EstiloEtiqueta}"/>
+                        <TextBox x:Name="TxtNombre" TabIndex="1" MaxLength="50"
+                                 Text="{Binding Nombre, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 AutomationProperties.Name="Nombre de la mascota"
+                                 AutomationProperties.HelpText="Campo obligatorio. Entre 2 y 50 caracteres"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,0,0,8">
+                        <Label Content="_Especie" Target="{Binding ElementName=CmbEspecie}" Style="{StaticResource EstiloEtiqueta}"/>
+                        <ComboBox x:Name="CmbEspecie" TabIndex="2"
+                                  ItemsSource="{Binding Especies}"
+                                  SelectedItem="{Binding Especie, Mode=TwoWay}"
+                                  AutomationProperties.Name="Especie"
+                                  AutomationProperties.HelpText="Elija la especie del paciente"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="2" Grid.Column="2" Margin="0,0,0,8">
+                        <Label Content="_Raza" Target="{Binding ElementName=TxtRaza}" Style="{StaticResource EstiloEtiqueta}"/>
+                        <TextBox x:Name="TxtRaza" TabIndex="3" MaxLength="50"
+                                 Text="{Binding Raza, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 AutomationProperties.Name="Raza"
+                                 AutomationProperties.HelpText="Raza del paciente. Opcional"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="3" Grid.Column="0" Margin="0,0,0,8">
+                        <Label Content="Eda_d (años)" Target="{Binding ElementName=TxtEdad}" Style="{StaticResource EstiloEtiqueta}"/>
+                        <TextBox x:Name="TxtEdad" TabIndex="4"
+                                 Text="{Binding Edad, Mode=TwoWay}"
+                                 AutomationProperties.Name="Edad en años"
+                                 AutomationProperties.HelpText="Número entero entre 0 y 40"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="3" Grid.Column="2" Margin="0,0,0,8">
+                        <Label Content="_Peso (kg) *" Target="{Binding ElementName=TxtPeso}" Style="{StaticResource EstiloEtiqueta}"/>
+                        <TextBox x:Name="TxtPeso" TabIndex="5"
+                                 Text="{Binding Peso, Mode=TwoWay}"
+                                 AutomationProperties.Name="Peso en kilos"
+                                 AutomationProperties.HelpText="Campo obligatorio. Peso entre 0,01 y 250 kilos. Use coma para los decimales"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="4" Grid.ColumnSpan="3" Margin="0,0,0,8">
+                        <Label Content="Pr_opietario / Titular *" Target="{Binding ElementName=TxtPropietario}" Style="{StaticResource EstiloEtiqueta}"/>
+                        <TextBox x:Name="TxtPropietario" TabIndex="6" MaxLength="80"
+                                 Text="{Binding Propietario, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 AutomationProperties.Name="Propietario o titular"
+                                 AutomationProperties.HelpText="Campo obligatorio. Nombre del titular entre 3 y 80 caracteres"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="5" Grid.ColumnSpan="3" Margin="0,0,0,8">
+                        <Label Content="_Teléfono *" Target="{Binding ElementName=TxtTelefono}" Style="{StaticResource EstiloEtiqueta}"/>
+                        <TextBox x:Name="TxtTelefono" TabIndex="7" MaxLength="20"
+                                 Text="{Binding Telefono, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 AutomationProperties.Name="Teléfono de contacto"
+                                 AutomationProperties.HelpText="Campo obligatorio. Teléfono del titular"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="6" Grid.ColumnSpan="3" Margin="0,0,0,12">
+                        <Label Content="_Motivo de consulta" Target="{Binding ElementName=TxtMotivo}" Style="{StaticResource EstiloEtiqueta}"/>
+                        <TextBox x:Name="TxtMotivo" TabIndex="8" MaxLength="500"
+                                 Text="{Binding MotivoConsulta, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 AcceptsReturn="True" TextWrapping="Wrap" Height="60"
+                                 VerticalContentAlignment="Top" Padding="10,8"
+                                 VerticalScrollBarVisibility="Auto"
+                                 AutomationProperties.Name="Motivo de consulta"
+                                 AutomationProperties.HelpText="Descripción del motivo de la visita. Máximo 500 caracteres"/>
+                    </StackPanel>
+
+                    <!-- Botones de acción -->
+                    <Button Grid.Row="7" Grid.ColumnSpan="3" Content="_Guardar paciente" TabIndex="9" IsDefault="True"
+                            Style="{StaticResource EstiloBotonPrimario}"
+                            Command="{Binding GuardarCommand}"
+                            AutomationProperties.Name="Guardar paciente"
+                            AutomationProperties.HelpText="Da de alta o actualiza el paciente. Necesita el nombre de la mascota y del titular"/>
+
+                    <Button Grid.Row="8" Grid.Column="0" Content="_Limpiar" TabIndex="10" IsCancel="True" Margin="0,10,0,0"
+                            Style="{StaticResource EstiloBotonSecundario}"
+                            Command="{Binding LimpiarCommand}"
+                            AutomationProperties.Name="Limpiar formulario"
+                            AutomationProperties.HelpText="Vacía el formulario y quita la selección de la tabla. También con la tecla Escape"/>
+
+                    <Button Grid.Row="8" Grid.Column="2" Content="Elim_inar" TabIndex="11" Margin="0,10,0,0"
+                            Style="{StaticResource EstiloBotonPeligro}"
+                            Command="{Binding EliminarCommand}"
+                            AutomationProperties.Name="Eliminar paciente"
+                            AutomationProperties.HelpText="Da de baja al paciente seleccionado. Pide confirmación antes"/>
+                </Grid>
+            </ScrollViewer>
+        </Border>
+
+        <!-- Columna derecha (* flexible): DataGrid de pacientes -->
+        <Border Grid.Column="2" Style="{StaticResource EstiloTarjeta}">
+            <DockPanel>
+                <Label DockPanel.Dock="Top" Content="Lista de p_acientes" Target="{Binding ElementName=GridPacientes}"
+                       FontSize="17" FontWeight="SemiBold" Foreground="{StaticResource BrushTexto}" Padding="0,0,0,10"/>
+
+                <DataGrid x:Name="GridPacientes" TabIndex="12"
+                          ItemsSource="{Binding Mascotas}"
+                          SelectedItem="{Binding MascotaSeleccionada, Mode=TwoWay}"
+                          AutoGenerateColumns="False"
+                          CanUserAddRows="False"
+                          CanUserDeleteRows="False"
+                          IsReadOnly="True"
+                          SelectionMode="Single"
+                          SelectionUnit="FullRow"
+                          HeadersVisibility="Column"
+                          GridLinesVisibility="Horizontal"
+                          HorizontalGridLinesBrush="{StaticResource BrushBorde}"
+                          BorderThickness="0"
+                          Background="White"
+                          AlternationCount="2"
+                          FontSize="13"
+                          AutomationProperties.Name="Lista de pacientes"
+                          AutomationProperties.HelpText="Seleccione un paciente para cargar sus datos en el formulario">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Nº" Binding="{Binding Id}" Width="45"/>
+                        <DataGridTextColumn Header="Nombre" Binding="{Binding Nombre}" Width="1.2*"/>
+                        <DataGridTemplateColumn Header="Especie" Width="95" SortMemberPath="Especie">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Border x:Name="Badge" Style="{StaticResource EstiloBadge}"
+                                            Background="{StaticResource BrushBadgeAzulFondo}">
+                                        <TextBlock x:Name="TextoBadge" Text="{Binding Especie}" FontSize="12" FontWeight="SemiBold"
+                                                   Foreground="{StaticResource BrushBadgeAzulTexto}"/>
+                                    </Border>
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding Especie}" Value="Gato">
+                                            <Setter TargetName="Badge" Property="Background" Value="{StaticResource BrushBadgeAmarilloFondo}"/>
+                                            <Setter TargetName="TextoBadge" Property="Foreground" Value="{StaticResource BrushBadgeAmarilloTexto}"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Especie}" Value="Ave">
+                                            <Setter TargetName="Badge" Property="Background" Value="{StaticResource BrushBadgeVerdeFondo}"/>
+                                            <Setter TargetName="TextoBadge" Property="Foreground" Value="{StaticResource BrushBadgeVerdeTexto}"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Especie}" Value="Exótico">
+                                            <Setter TargetName="Badge" Property="Background" Value="{StaticResource BrushBadgeRojoFondo}"/>
+                                            <Setter TargetName="TextoBadge" Property="Foreground" Value="{StaticResource BrushBadgeRojoTexto}"/>
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="Raza" Binding="{Binding Raza}" Width="*"/>
+                        <DataGridTextColumn Header="Edad" Binding="{Binding Edad}" Width="55"/>
+                        <DataGridTextColumn Header="Peso (kg)" Binding="{Binding Peso, StringFormat={}{0:0.##}}" Width="75"/>
+                        <DataGridTextColumn Header="Propietario / Titular" Binding="{Binding Propietario}" Width="1.4*"/>
+                        <DataGridTextColumn Header="Teléfono" Binding="{Binding Telefono}" Width="95"/>
+                        <DataGridTextColumn Header="Registro" Binding="{Binding FechaRegistro, StringFormat={}{0:dd/MM/yyyy}}" Width="90"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </DockPanel>
+        </Border>
+    </Grid>
+</UserControl>

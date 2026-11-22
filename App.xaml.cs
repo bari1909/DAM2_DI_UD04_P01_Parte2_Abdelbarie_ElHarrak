@@ -1,0 +1,17 @@
+﻿using System.Configuration;
+using System.Data;
+using System.Windows;
+
+namespace Veterinario_MVVM;
+
+/// <summary>
+/// Interaction logic for App.xaml
+/// </summary>
+public partial class App : Application
+{
+    public App()
+    {
+        // Permite escribir decimales ("7,5") en TextBox enlazados a double con UpdateSourceTrigger=PropertyChanged
+        FrameworkCompatibilityPreferences.KeepTextBoxDisplaySynchronizedWithTextProperty = false;
+    }
+}
